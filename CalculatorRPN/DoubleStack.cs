@@ -49,8 +49,10 @@ namespace CalculatorRPN
             }
         }
 
-        public override string ToString()
+        public override string ToString() //TODO: är den nödvändig? Finns inte denna biblioteksmetod redan?
         {
+
+
             StringBuilder b = new StringBuilder();
             b.Append('[');
             for (int i = Depth - 1; ; i--)
@@ -58,8 +60,10 @@ namespace CalculatorRPN
                 b.Append(data[i]);
                 if (i == 0)
                     return b.Append(']').ToString();
-                b.Append(", ");
+                else { b.Append(", "); }
+                
             }
+
         }
 
         public void Clear()

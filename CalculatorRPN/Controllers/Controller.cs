@@ -1,10 +1,13 @@
-﻿namespace CalculatorRPN
+﻿using CalculatorRPN.interfaces;
+
+namespace CalculatorRPN.Controllers
 {
     internal class Controller
     {
-        public Controller()
+        private readonly IUserInterface _userInterface;
+        public Controller(IUserInterface userInterface)
         {
-            
+            _userInterface = userInterface;
         }
 
         public void RunProgram()
@@ -32,63 +35,64 @@
             DoubleStack stack = new DoubleStack();
             Calculator calculator = new Calculator();
 
+            //TODO: Försök att bryta ut console så att koden kan återanvändas i andra applikationer.
             while (true)
             {
                 if (stack.Depth == 0)
                 {
-                    Console.WriteLine(welcomeText);
-                    Console.WriteLine(commands);
+                    _userInterface.Write(welcomeText);
+                    _userInterface.Write(commands);
                 }
                 else
                 {
-                    Console.WriteLine(stack.ToString());
+                    _userInterface.Write(stack.ToString());
                 }
 
                 // TODO: kanske skapa string check i en annan class typ stringValidation.validate();
-                string input = Console.ReadLine()?.Trim() ?? string.Empty;
+                string input = _userInterface.Read();
 
                 if (string.IsNullOrEmpty(input))
                 {
-                    Console.WriteLine(emptyInputMessage);
+                    _userInterface.Write(emptyInputMessage);
                     continue;
                 }
 
                 char command = input[0];
                 try
                 {
-                    // TODO: finns det bättre sätt och göra detta?
+                    // TODO: finns det bättre sätt och göra detta? istället för switch
                     switch (command)
                     {
 
-                        case var digitCommand when Char.IsDigit(command):
-                        double value = Convert.ToDouble(input);
-                        stack.Push(value);
-                        break;
+                        case var digitCommand when char.IsDigit(command):
+                            double value = Convert.ToDouble(input);
+                            stack.Push(value);
+                            break;
                         case '+':
-                        Calculator.Add(stack);
-                        break;
+                            Calculator.Add(stack);
+                            break;
                         case '*':
-                        Calculator.Multiply(stack);
-                        break;
+                            Calculator.Multiply(stack);
+                            break;
                         case '-':
-                        Calculator.Subtract(stack);
-                        break;
+                            Calculator.Subtract(stack);
+                            break;
                         case '/':
-                        Calculator.Divide(stack);
-                        break;
+                            Calculator.Divide(stack);
+                            break;
                         case 'c':
-                        stack.Clear();
-                        break;
+                            stack.Clear();
+                            break;
                         case 'q':
-                        return;
+                            return;
                         default:
-                        Console.WriteLine(invalidCommand);
-                        break;
+                            _userInterface.Write(invalidCommand);
+                            break;
                     }
                 }
                 catch (InvalidOperationException ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    _userInterface.Write(ex.Message);
                 }
 
             }
