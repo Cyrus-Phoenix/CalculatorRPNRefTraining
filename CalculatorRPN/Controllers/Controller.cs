@@ -1,4 +1,5 @@
 ﻿using CalculatorRPN.interfaces;
+using System.Text.RegularExpressions;
 
 namespace CalculatorRPN.Controllers
 {
@@ -10,10 +11,22 @@ namespace CalculatorRPN.Controllers
             _userInterface = userInterface;
         }
 
+        private bool CheckInput(string input, string message)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                _userInterface.Write(message);
+                return true;
+            }
+            return false;
+        }
+
         public void RunProgram()
         {
 
             #region variabels
+
+            var validNoneDigitCommands = new[] { 'q', 'c', '+', '-', '*', '/' };
 
             string welcomeText = "****Welcome to RPN calculator****";
 
@@ -35,7 +48,7 @@ namespace CalculatorRPN.Controllers
             DoubleStack stack = new DoubleStack();
             Calculator calculator = new Calculator();
 
-            //TODO: Försök att bryta ut console så att koden kan återanvändas i andra applikationer.
+            
             while (true)
             {
                 if (stack.Depth == 0)
@@ -48,16 +61,29 @@ namespace CalculatorRPN.Controllers
                     _userInterface.Write(stack.ToString());
                 }
 
-                // TODO: kanske skapa string check i en annan class typ stringValidation.validate();
                 string input = _userInterface.Read();
 
-                if (string.IsNullOrEmpty(input))
+                if (CheckInput(input, emptyInputMessage))
                 {
-                    _userInterface.Write(emptyInputMessage);
                     continue;
                 }
 
                 char command = input[0];
+
+                if (char.IsDigit(command))
+                {
+                    input = Regex.Replace(input, @"[^0-9.]", "");
+                    if (CheckInput(input, invalidCommand))
+                    {
+                        continue;
+                    }
+                }
+                else if (!validNoneDigitCommands.Contains(command))
+                {
+                    _userInterface.Write(invalidCommand);
+                    continue;
+                }
+
                 try
                 {
                     // TODO: finns det bättre sätt och göra detta? istället för switch

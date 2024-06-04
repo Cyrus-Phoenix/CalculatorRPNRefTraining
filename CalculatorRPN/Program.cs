@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using CalculatorRPN.Controllers;
+using CalculatorRPN.interfaces;
 
 namespace CalculatorRPN
 {
@@ -7,7 +8,8 @@ namespace CalculatorRPN
     {
         static void Main(string[] args)
         {
-            Controller controller = new Controller();
+            IUserInterface userInterface = new ConsoleUserInterface();
+            Controller controller = new Controller(userInterface);
             controller.RunProgram();
         }
     }
