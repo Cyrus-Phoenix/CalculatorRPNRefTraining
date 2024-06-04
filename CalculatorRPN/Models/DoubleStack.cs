@@ -1,9 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using CalculatorRPN.interfaces;
-
-namespace CalculatorRPN
+﻿namespace CalculatorRPN.Models
 {
     
     public class DoubleStack

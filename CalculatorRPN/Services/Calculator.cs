@@ -1,10 +1,12 @@
-﻿namespace CalculatorRPN
+﻿using CalculatorRPN.Models;
+
+namespace CalculatorRPN.Services
 {
     internal class Calculator
     {
         public Calculator()
         {
-            
+
         }
 
         public static void Add(DoubleStack stack)

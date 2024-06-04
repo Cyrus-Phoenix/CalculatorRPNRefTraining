@@ -1,11 +1,6 @@
-﻿using CalculatorRPN.interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CalculatorRPN.Interfaces;
 
-namespace CalculatorRPN
+namespace CalculatorRPN.Common
 {
     public class ConsoleUserInterface : IUserInterface
     {
