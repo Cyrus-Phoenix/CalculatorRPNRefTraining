@@ -6,40 +6,56 @@ namespace CalculatorRPN.Controllers
     internal class Controller
     {
         private readonly IUserInterface _userInterface;
+        private readonly Validation _validation;
         public Controller(IUserInterface userInterface)
         {
             _userInterface = userInterface;
+            _validation = new Validation(userInterface);
         }
 
-        private bool CheckInput(string input, string message)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                _userInterface.Write(message);
-                return true;
-            }
-            return false;
-        }
-
+        
         public void RunProgram()
         {
 
             #region variabels
 
+            /* Console Colors */
+            string RED = Console.IsOutputRedirected ? "" : "\x1b[91m";
+            string GREEN = Console.IsOutputRedirected ? "" : "\x1b[92m";
+            string CYAN = Console.IsOutputRedirected ? "" : "\x1b[96m";
+            string MAGENTA = Console.IsOutputRedirected ? "" : "\x1b[95m";
+            string NORMAL = Console.IsOutputRedirected ? "" : "\x1b[39m";
+            string YELLOW = Console.IsOutputRedirected ? "" : "\x1b[93m";
+
             var validNoneDigitCommands = new[] { 'q', 'c', '+', '-', '*', '/' };
 
-            string welcomeText = "****Welcome to RPN calculator****";
+            string welcomeText = $@"
+                                 {CYAN}   +================================================+
+                                    | __        __   _                               |
+                                    | \ \      / /__| | ___ ___  _ __ ___   ___      |
+                                    |  \ \ /\ / / _ \ |/ __/ _ \| '_ ` _ \ / _ \     |
+                                    |   \ V  V /  __/ | (_| (_) | | | | | |  __/     |
+                                    |  _ \_/\_/ \___|_|\___\___/|_| |_| |_|\___|     |
+                                    | | |_ ___   |  _ \|  _ \| \ | |                 |
+                                    | | __/ _ \  | |_) | |_) |  \| |                 |
+                                    | | || (_) | |  _ <|  __/| |\  |                 |
+                                    |  \__\___/  |_| \_\_|   |_| \_|   _             |
+                                    |  / ___|__ _| | ___ _   _| | __ _| |_ ___  _ __ |
+                                    | | |   / _` | |/ __| | | | |/ _` | __/ _ \| '__||
+                                    | | |__| (_| | | (__| |_| | | (_| | || (_) | |   |
+                                    |  \____\__,_|_|\___|\__,_|_|\__,_|\__\___/|_|   |
+                                    |                                                |
+                                    +================================================+{NORMAL}";
 
-            string commands = "Commands: " +
-                              "\n q:quit " +
-                              "\n c:clear " +
-                              "\n Number:Number that you want to calculate" +
-                              "\n + - * / :Mathematical operators " +
-                              "\n []";
+            string commands = $@" {MAGENTA}Commands{NORMAL}: 
+       {GREEN} q{NORMAL}:  quit 
+       {GREEN} c{NORMAL}:  clear
+  {GREEN} Number{NORMAL}:  Number that you want to calculate
+{GREEN} + - * / {NORMAL}:  Mathematical operators ";
 
-            string invalidCommand = "Invalid command, please try again";
+            string invalidCommand = $"\n {RED}*** ERROR: Invalid command, please try again. *** \n {NORMAL}";
 
-            string emptyInputMessage = "You didn't enter any command. Please try again.";
+            string emptyInputMessage = $"\n {YELLOW}*** WARNING: You didn't enter any command. Please try again. ***\n {NORMAL}";
 
             #endregion
 
@@ -54,7 +70,7 @@ namespace CalculatorRPN.Controllers
                 if (stack.Depth == 0)
                 {
                     _userInterface.Write(welcomeText);
-                    _userInterface.Write(commands);
+                    _userInterface.Write("\n" + commands);
                 }
                 else
                 {
@@ -63,7 +79,7 @@ namespace CalculatorRPN.Controllers
 
                 string input = _userInterface.Read();
 
-                if (CheckInput(input, emptyInputMessage))
+                if (_validation.IsInputEmpty(input, emptyInputMessage))
                 {
                     continue;
                 }
@@ -73,14 +89,14 @@ namespace CalculatorRPN.Controllers
                 if (char.IsDigit(command))
                 {
                     input = Regex.Replace(input, @"[^0-9.]", "");
-                    if (CheckInput(input, invalidCommand))
+                    if (string.IsNullOrEmpty(input))
                     {
+                        _userInterface.Write(invalidCommand);
                         continue;
                     }
                 }
-                else if (!validNoneDigitCommands.Contains(command))
+                else if (!_validation.IsValidCommand(command,invalidCommand))
                 {
-                    _userInterface.Write(invalidCommand);
                     continue;
                 }
 
@@ -110,6 +126,7 @@ namespace CalculatorRPN.Controllers
                             stack.Clear();
                             break;
                         case 'q':
+                            _userInterface.Write("\n ************ Goodbye! ************\n");
                             return;
                         default:
                             _userInterface.Write(invalidCommand);

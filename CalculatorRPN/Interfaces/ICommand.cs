@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CalculatorRPN.Controllers
+namespace CalculatorRPN.Interfaces
 {
     internal interface ICommand
     {
