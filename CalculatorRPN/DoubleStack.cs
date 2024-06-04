@@ -8,19 +8,13 @@ namespace CalculatorRPN
     
     public class DoubleStack
     {
-        //private double[] data;
         private Stack<double> data;
 
         public int Depth { get { return data.Count; }}
 
-        //int initialStackSize = 1000;
-        //public int Depth { get; private set; }
-
         public DoubleStack()
         {
             data = new Stack<double>();
-            
-            //Depth = 0;
         }
 
         public void Push(double value)
@@ -57,18 +51,6 @@ namespace CalculatorRPN
         public override string ToString()
         {
             return "[" + string.Join(", ", data) + "]";
-
-          /*  StringBuilder b = new StringBuilder();
-            b.Append('[');
-            for (int i = Depth - 1; ; i--)
-            {
-                b.Append(data[i]);
-                if (i == 0)
-                    return b.Append(']').ToString();
-                else { b.Append(", "); }
-                
-            }*/
-
         }
 
         public void Clear()
